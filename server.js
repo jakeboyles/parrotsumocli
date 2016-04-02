@@ -1,17 +1,54 @@
-var Twit = require('twit');
+"use strict";
 
-var T = new Twit({
-    consumer_key:         'qwcSxkl8GqhYZOn4MMFW5oY11'
-  , consumer_secret:      'HjDdwD9HLHY5Mg82VYtiCWkFdlLoOtmWbpLw1iuhEuzFWy6IKP'
-  , access_token:         '18745434-MVBSt2HCYb48130cnmVUVaW87E0jcx5fCabOEWlc2'
-  , access_token_secret:  'frgHDZsqHVNHHlePxwYNalfe79aOgwOHnZqJuLgpdKFJd'
-})
+var sumo = require('node-sumo');
+var keypress = require('keypress');
 
-var stream = T.stream('statuses/filter', { track: '#apple' })
+var drone = sumo.createClient();
 
-
-stream.on('tweet', function (tweet) {
-
-  console.log(tweet.text);
-
+drone.connect(function() {
+	console.log("Welcome to JS Drone Control!");
+  console.log("Use your arrow keys to drive and J to jump and S to shake!");
 });
+
+drone.on("battery", function(battery) {
+  console.log("Battery: " + battery);
+});
+
+keypress(process.stdin);
+
+process.stdin.on('keypress', function (ch, key) {
+  if (key && key.name=='up') {
+  	drone.forward(50);
+  }
+  else if(key && key.name=='down') 
+  {
+  	drone.backward(50);
+  }
+  else if(key && key.name=='left') 
+  {
+  	drone.left(50);
+  }
+  else if(key && key.name=='right') 
+  {
+  	drone.right(50);
+  }
+  else if(key && key.name=='s')
+  {
+  	drone.animationsSlowShake();
+  }
+  else if(key && key.name=='j')
+  {
+    drone.animationsHighJump();
+  }
+  else if(key && key.name=='escape')
+  {
+    process.exit();
+  }
+  else
+  {
+  	drone.stop();
+  }
+});
+
+process.stdin.setRawMode(true);
+process.stdin.resume();
