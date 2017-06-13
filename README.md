@@ -9,3 +9,5 @@ Control an parrot jumping sumo via your macbook
 `npm install`
 
 `npm start`
+
+Awesome!
